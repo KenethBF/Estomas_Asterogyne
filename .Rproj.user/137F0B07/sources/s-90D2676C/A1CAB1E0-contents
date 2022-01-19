@@ -1,0 +1,257 @@
+---
+title: "Día 01"
+output: html_document
+---
+
+# Primer día
+
+## Primeros pasos en R
+
+Para  cargar los **paquetes**
+
+```{r, message=FALSE, warning=FALSE}
+library(tidyverse)
+library(rio)
+library(visdat)
+library(parameters)
+library(performance)
+library(see)
+library(knitr)
+library(DescTools)
+library(sjPlot)
+library(visreg)
+library(bayestestR)
+library(effectsize)
+```
+
+
+Para leer los datos
+
+```{r}
+include_graphics("imagenes/coding_cases.png")
+```
+
+```{r}
+include_graphics("imagenes/continuous_discrete.png")
+```
+
+```{r}
+include_graphics("imagenes/nominal_ordinal_binary.png")
+```
+
+```{r}
+include_graphics("imagenes/penguins.png")
+```
+
+```{r}
+include_graphics("imagenes/culmen_depth.png")
+```
+
+
+
+```{r}
+include_graphics("imagenes/presenting_monster.png")
+```
+
+```{r}
+include_graphics("imagenes/not_normal.png")
+```
+
+```{r}
+pin <- import("datos/pinguinos.xlsx")
+```
+
+```{r}
+head(pin)
+```
+
+```{r}
+vis_dat(pin)
+```
+
+```{r}
+pin <- na.omit(pin)
+```
+
+```{r}
+vis_dat(pin)
+```
+
+```{r}
+pin$species <- factor(pin$species)
+pin$island <- factor(pin$island)
+pin$sex <- factor(pin$sex)
+```
+
+
+```{r}
+ggplot(pin, aes(species, body_mass_g)) +
+  geom_jitter(width = 0.2, aes(shape = island, size = flipper_length_mm, color = bill_length_mm), alpha = 0.5) +
+  facet_wrap(vars(sex))
+```
+
+```{r}
+ggsave("plots/plot_01.pdf")
+```
+
+```{r}
+pin_02 <- pin |> 
+  dplyr::select(species, island, sex, body_mass_g) |>
+  filter(body_mass_g > 3000) |> slice(1:200) |>
+  mutate(log_body = log(body_mass_g)) |> 
+  filter(species %in% c("Adelie", "Gentoo"))
+```
+
+
+```{r}
+pin_02
+```
+
+```{r}
+pin_medias <- pin |>
+  group_by(species) |>
+  summarise(media = mean(body_mass_g)) |>
+  ungroup()
+```
+
+```{r}
+pin_medias
+```
+
+```{r}
+ggplot(pin_medias, aes(species, media)) +
+  theme_minimal(base_siz = 14) +
+  geom_col(width = 0.02) +
+  geom_point(size = 8, pch = 21, color = "black", fill = "white") +
+  geom_text(aes(label = round(media, 0)), color = "blue", size = 2) +
+  ylim(0, 6000) +
+  xlab("Especie")
+```
+
+
+```{r}
+pin_03 <- pin |>
+  dplyr::select(species, body_mass_g) |>
+  filter(species %in% c("Adelie", "Gentoo"))
+```
+
+```{r}
+pin_03
+```
+
+```{r}
+pin_04 <- pin_03 |>
+  group_by(species) |>
+  summarise(media = mean(body_mass_g),
+            de = sd(body_mass_g),
+            ee = de/sqrt(n()),
+            li = media - 1.96*ee,
+            ls = media + 1.96*ee)
+```
+
+```{r}
+pin_04
+```
+
+
+
+```{r}
+ggplot(pin_03, aes(species, body_mass_g)) +
+  geom_boxplot() +
+  geom_violin(alpha = 0.4) +
+  geom_jitter(width = 0.2) +
+  geom_errorbar(aes(x = species, y = media, ymin = li, ymax = ls), data = pin_04, color = "red", width = 0.2) +
+  geom_point(data = pin_04, aes(species, media), color = "red")
+```
+
+```{r}
+t <- t.test(body_mass_g ~ species, data = pin_03, var.equal = TRUE)
+```
+
+```{r}
+t
+```
+
+```{r}
+MeanDiffCI(body_mass_g ~ species, data = pin_03)
+```
+
+La especie Gentoo fue 1386 g (IC 95%: 1268 - 1503) más pesada que la especie Adelie ().
+
+```{r}
+r_01 <- lm(body_mass_g ~ species, data = pin_03)
+```
+
+```{r}
+summary(r_01)
+```
+
+```{r}
+plot_model(r_01, type = "pred")
+```
+
+```{r}
+model_parameters(r_01)
+```
+
+```{r}
+cohens_d(body_mass_g ~ species, data = pin_03)
+```
+
+```{r}
+interpret_d(-2.90)
+```
+
+```{r}
+r_00 <- lm(body_mass_g ~ 1, data = pin_03)
+```
+
+```{r}
+summary(r_00)
+```
+
+
+
+
+
+```{r}
+bf <- bayesfactor_models(r_01, denominator = r_00)
+```
+
+```{r}
+plot(bf)
+```
+
+```{r}
+cp <- compare_performance(r_00, r_01, rank = TRUE)
+```
+
+
+```{r}
+plot(cp)
+```
+
+```{r}
+pn <- import("datos/peso_al_nacer.xlsx")
+```
+
+
+```{r}
+pn
+```
+
+```{r}
+pn$race <- factor(pn$race)
+pn$smoke <- factor(pn$smoke)
+pn$ht <- factor(pn$ht)
+pn$ui <- factor(pn$ui)
+```
+
+```{r}
+bw_01 <- lm(bwt )
+```
+
+
+
+
+

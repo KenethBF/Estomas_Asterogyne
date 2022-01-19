@@ -1,0 +1,75 @@
+library(rio)
+
+estomas <- import("/Users/Kenneth/Desktop/Estomas.csv")
+
+library(tidyverse)
+library(rio)
+library(visdat)
+library(parameters)
+library(performance)
+library(see)
+library(knitr)
+library(DescTools)
+library(sjPlot)
+library(visreg)
+library(bayestestR)
+library(effectsize)
+
+estomas$Edad <- as.factor(estomas$Edad)
+
+estomas$cobertura_dosel <- as.numeric(estomas$cobertura_dosel)
+
+estomas <- na.omit(estomas)
+
+estomas$ancho_estoma <- as.numeric(estomas$ancho_estoma)
+
+estomas
+
+
+lm_0 <- lm(indice_estomatico ~ 1, data = Estomas_xlsx_Base_limpia)
+lm_1 <- lm(indice_estomatico ~ cobertura_dosel, data = Estomas_xlsx_Base_limpia)
+lm_2 <- lm(indice_estomatico ~ altura_hoja, data = Estomas_xlsx_Base_limpia)
+lm_3 <- lm(indice_estomatico ~ Edad, data = Estomas_xlsx_Base_limpia)
+lm_4 <- lm(indice_estomatico ~ cobertura_dosel + altura_hoja, data = Estomas_xlsx_Base_limpia)
+lm_5 <- lm(indice_estomatico ~ cobertura_dosel * altura_hoja, data = Estomas_xlsx_Base_limpia)
+
+cp <- compare_performance(lm_0, lm_1, lm_2, lm_3, lm_4, lm_5, rank = TRUE)
+
+plot(ci)
+
+cp
+
+
+###
+
+
+lm_d0 <- lm(densidad_estomatica ~ 1, data = Estomas_xlsx_Base_limpia)
+lm_d1 <- lm(densidad_estomatica ~ cobertura_dosel, data = Estomas_xlsx_Base_limpia)
+lm_d2 <- lm(densidad_estomatica ~ altura_hoja, data = Estomas_xlsx_Base_limpia)
+lm_d3 <- lm(densidad_estomatica ~ Edad, data = Estomas_xlsx_Base_limpia)
+lm_d4 <- lm(densidad_estomatica ~ cobertura_dosel + altura_hoja, data = Estomas_xlsx_Base_limpia)
+lm_d5 <- lm(densidad_estomatica ~ cobertura_dosel * altura_hoja, data = Estomas_xlsx_Base_limpia)
+
+cd <- compare_performance(lm_d0, lm_d1, lm_d2, lm_d3, lm_d4, lm_d5, rank = TRUE)
+
+plot(cd)
+
+cd
+
+
+####
+
+lm_a0 <- lm(Estomas_xlsx_Base_limpia$...17 ~ 1, data = Estomas_xlsx_Base_limpia)
+lm_a1 <- lm(Estomas_xlsx_Base_limpia$...17 ~ cobertura_dosel, data = Estomas_xlsx_Base_limpia)
+lm_a2 <- lm(Estomas_xlsx_Base_limpia$...17 ~ altura_hoja, data = Estomas_xlsx_Base_limpia)
+lm_a3 <- lm(Estomas_xlsx_Base_limpia$...17 ~ Edad, data = Estomas_xlsx_Base_limpia)
+lm_a4 <- lm(Estomas_xlsx_Base_limpia$...17 ~ cobertura_dosel + altura_hoja, data = Estomas_xlsx_Base_limpia)
+lm_a5 <- lm(Estomas_xlsx_Base_limpia$...17 ~ cobertura_dosel * altura_hoja, data = Estomas_xlsx_Base_limpia)
+
+ca <- compare_performance(lm_a0, lm_a1, lm_a2, lm_a3, lm_a4, lm_a5, rank = TRUE)
+
+plot(ca)
+
+ca
+
+

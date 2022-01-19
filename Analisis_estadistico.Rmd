@@ -1,0 +1,177 @@
+---
+title: "Variación de tamaño, densidad e índice estomático en hojas de Asterogyne martiana (Arecaceae)"
+author: "Kenneth Barrantes, Debora Elías, Miguel Martínez Rodríguez, Nelsy Niño, Fermín L. Felipe & Claudia Segovia."
+date: "18/1/2022"
+output: html_document
+---
+
+Librerias
+```{r, message=FALSE, warning=FALSE}
+library(rio)
+library(tidyverse)
+library(rio)
+library(visdat)
+library(parameters)
+library(performance)
+library(see)
+library(knitr)
+library(DescTools)
+library(sjPlot)
+library(visreg)
+library(bayestestR)
+library(effectsize)
+library(readr)
+library(ggplot2)
+```
+
+Cargar base de datos ya transformada en variables numericas y categoricas desde el set de datos
+```{r, message=FALSE, warning=FALSE}
+Estomas_base <- read_csv("Estomas.xlsx - Base limpia.csv", 
+    col_types = cols(altura_hoja = col_number(), 
+        longitud_hoja = col_number(), Edad = col_factor(levels = c("1", 
+            "0")), cobertura_dosel = col_number(), 
+        luz = col_number(), celulas_epidermicas = col_number(), 
+        largo_estoma = col_number(), ancho_estoma = col_number(), 
+        densidad_estomatica = col_number(), 
+        indice_estomatico = col_number(), 
+        no_estomas = col_number(), pl_estomas = col_number(), 
+        pa_estomas = col_number(), radio_estoma = col_number(), 
+        area_estoma = col_number(), area_estoma_m = col_number()))
+```
+
+
+
+# Modelos
+
+
+## Modelos con respecto a indice estomatico
+Se comparan las variables cobertura de dosel, altura de la hoja y edad con respecto a la variable respuesta indice estomatico
+```{r}
+lm_i0 <- lm(indice_estomatico ~ 1, data = Estomas_base)
+lm_i1 <- lm(indice_estomatico ~ cobertura_dosel, data = Estomas_base)
+lm_i2 <- lm(indice_estomatico ~ altura_hoja, data = Estomas_base)
+lm_i3 <- lm(indice_estomatico ~ Edad, data = Estomas_base)
+lm_i4 <- lm(indice_estomatico ~ cobertura_dosel + altura_hoja, data = Estomas_base)
+lm_i5 <- lm(indice_estomatico ~ cobertura_dosel * altura_hoja, data = Estomas_base)
+
+ci <- compare_performance(lm_i0, lm_i1, lm_i2, lm_i3, lm_i4, lm_i5, rank = TRUE)
+
+plot(ci)
+
+ci
+
+```
+El modelo más explicativo es el lm_i5, siendo la cobertura de dosel y la altura de la hoja bajo interacción las que mejor explican el número de estomas por unidad de celulas epiteliales.
+
+
+
+```{r}
+cii <- check_normality(lm_i5)
+
+```
+```{r}
+chi <- check_heteroscedasticity(lm_i5)
+```
+
+```{r}
+cci <- check_collinearity(lm_i5)
+```
+```{r}
+plot_model(lm_i5, type = "pred")
+```
+```{r}
+summary(lm_i5)
+```
+
+
+
+## Modelo con respecto a densidad estomatica
+
+Se comparan las variables cobertura de dosel, altura de la hoja y edad con respecto a la variable respuesta densidad estomatica
+
+```{r}
+lm_d0 <- lm(densidad_estomatica ~ 1, data = Estomas_base)
+lm_d1 <- lm(densidad_estomatica ~ cobertura_dosel, data = Estomas_base)
+lm_d2 <- lm(densidad_estomatica ~ altura_hoja, data = Estomas_base)
+lm_d3 <- lm(densidad_estomatica ~ Edad, data = Estomas_base)
+lm_d4 <- lm(densidad_estomatica ~ cobertura_dosel + altura_hoja, data = Estomas_base)
+lm_d5 <- lm(densidad_estomatica ~ cobertura_dosel * altura_hoja, data = Estomas_base)
+
+cd <- compare_performance(lm_d0, lm_d1, lm_d2, lm_d3, lm_d4, lm_d5, rank = TRUE)
+
+plot(cd)
+
+cd
+```
+El modelo que mejor explica la densidad estomatica es el lm_d2, siendo la altura de la hoja con respecto al suelo la variable que determina el número de estomas por unidad cuadrada
+
+
+
+
+```{r}
+cdi <- check_normality(lm_d2)
+
+```
+```{r}
+chd <- check_heteroscedasticity(lm_d2)
+```
+```{r}
+plot_model(lm_d2, type = "pred")
+```
+
+```{r}
+summary(lm_d2)
+```
+
+
+
+## Modelo de área
+
+Se comparan las variables cobertura de dosel, altura de la hoja y edad con respecto a la variable respuesta área del estoma
+
+```{r}
+lm_a0 <- lm(area_estoma_m ~ 1, data = Estomas_base)
+lm_a1 <- lm(area_estoma_m ~ cobertura_dosel, data = Estomas_base)
+lm_a2 <- lm(area_estoma_m ~ altura_hoja, data = Estomas_base)
+lm_a3 <- lm(area_estoma_m ~ Edad, data = Estomas_base)
+lm_a4 <- lm(area_estoma_m ~ cobertura_dosel + altura_hoja, data = Estomas_base)
+lm_a5 <- lm(area_estoma_m ~ cobertura_dosel * altura_hoja, data = Estomas_base)
+
+ca <- compare_performance(lm_a0, lm_a1, lm_a2, lm_a3, lm_a4, lm_a5, rank = TRUE)
+
+plot(ca)
+
+ca
+```
+
+El modelo que mejor se ajusta al conjunto de datos es el lm_a5, el cual explica mediante las variables cobertura de dosel y altura de la hoja el area que cubren los estomas
+
+
+```{r}
+cai <- check_normality(lm_a5)
+
+```
+
+```{r}
+cha <- check_heteroscedasticity(lm_a5)
+```
+```{r}
+cca <- check_collinearity(lm_a5)
+```
+
+```{r}
+plot_model(lm_a5, type = "pred")
+```
+
+```{r}
+summary(lm_a5)
+```
+
+&nbsp;
+
+---
+
+```{r session, echo=FALSE}
+sessionInfo()
+```
+

@@ -1,0 +1,15 @@
+"0","Estomas_base <- read_csv(""Estomas.xlsx - Base limpia.csv"", 
+    col_types = cols(altura_hoja = col_number(), 
+        longitud_hoja = col_number(), Edad = col_factor(levels = c(""1"", 
+            ""0"")), cobertura_dosel = col_number(), 
+        luz = col_number(), celulas_epidermicas = col_number(), 
+        largo_estoma = col_number(), ancho_estoma = col_number(), 
+        densidad_estomatica = col_number(), 
+        indice_estomatico = col_number(), 
+        no_estomas = col_number(), pl_estomas = col_number(), 
+        pa_estomas = col_number(), radio_estoma = col_number(), 
+        area_estoma = col_number(), ...17 = col_number()))
+"
+"2","New names:
+* `` -> ...17
+"
