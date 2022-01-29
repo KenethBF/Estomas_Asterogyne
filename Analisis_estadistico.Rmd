@@ -1,5 +1,5 @@
 ---
-title: "Variación de tamaño, densidad e índice estomático en hojas de Asterogyne martiana (Arecaceae)"
+title: "Respirando hacia la luz: Variación en los estomas de Asterogyne martiana (Arecaceae) en la Estación Biológica La Selva"
 author: "Kenneth Barrantes, Debora Elías, Miguel Martínez Rodríguez, Nelsy Niño, Fermín L. Felipe & Claudia Segovia."
 date: "18/1/2022"
 output: html_document
@@ -97,6 +97,7 @@ lm_d3 <- lm(densidad_estomatica ~ Edad, data = Estomas_base)
 lm_d4 <- lm(densidad_estomatica ~ cobertura_dosel + altura_hoja, data = Estomas_base)
 lm_d5 <- lm(densidad_estomatica ~ cobertura_dosel * altura_hoja, data = Estomas_base)
 
+
 cd <- compare_performance(lm_d0, lm_d1, lm_d2, lm_d3, lm_d4, lm_d5, rank = TRUE)
 
 plot(cd)
@@ -166,6 +167,13 @@ plot_model(lm_a5, type = "pred")
 ```{r}
 summary(lm_a5)
 ```
+
+
+
+
+
+
+
 
 &nbsp;
 
